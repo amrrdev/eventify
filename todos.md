@@ -12,10 +12,12 @@
 
 ### Auth Setup API
 
-- [ ] Set up bcrypt for hashing passwords
-- [ ] Create endpoint for sign-up with it's functionality
-- [ ] Create endpoint for sign-in with it's functionality
-- [ ] Implement access and refresh token
+- [x] Set up bcrypt for hashing passwords
+- [x] Create endpoint for sign-up with it's functionality
+- [x] Create endpoint for sign-in with it's functionality
+- [x] Implement access and refresh token
+- [ ] Implement refresh token endpoint
+- [ ] Implement Redis and refresh token rotation
 - [ ] Implement Google sign-in and sign-up
 
 ### Event Ingestion API
@@ -26,15 +28,6 @@
 - [ ] Add rate limiting per customer
 - [ ] Set up request validation (event schema)
 - [ ] Test event ingestion with Postman
-
-### Database Setup
-
-- [ ] Set up PostgreSQL database
-- [ ] Create `customers` table with API keys
-- [ ] Create `events` table with proper indexes
-- [ ] Set up database connection pooling
-- [ ] Write basic CRUD operations
-- [ ] Add database migration scripts
 
 ### Message Queue
 
