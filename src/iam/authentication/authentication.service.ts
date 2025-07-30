@@ -34,7 +34,6 @@ export class AuthenticationService {
 
     const { password, ...userData } = signUpDto;
     const hashedPassword = await this.hashingService.hash(password);
-    // TODO: should use some sort of queue to send notificatons insted of make users waiting
     // await this.notificationService.sendEmial({ to: 'amrrdev@gmail.com', subject: 'Test', text: 'Hi, Amr' });
     const newUser = await this.userRepository.createUser({ ...userData, password: hashedPassword });
 
@@ -48,6 +47,8 @@ export class AuthenticationService {
       throw new ConflictException('Invalid email or password');
     }
 
+    // TODO: should use some sort of queue to send notificatons insted of making users waitssq
+    await this.notificationService.sendEmail({ to: 'amrrdev@gmail.com', subject: 'Test', text: 'Hi, Amr' });
     console.log(`completed ${++AuthenticationService.comp}`);
     return await this.generateTokens(existingUser);
   }
