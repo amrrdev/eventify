@@ -7,6 +7,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import databaseConfig from './config/database.config';
 import { RedisModule } from './integrations/redis/redis.module';
+import { NotificationService } from './integrations/notification/notification.service';
+import { NotificationModule } from './integrations/notification/notification.module';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { RedisModule } from './integrations/redis/redis.module';
     IamModule,
     UsersModule,
     RedisModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

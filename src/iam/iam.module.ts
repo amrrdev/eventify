@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from '../integrations/redis/redis.module';
+import { NotificationModule } from '../integrations/notification/notification.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { RedisModule } from '../integrations/redis/redis.module';
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     RedisModule,
+    NotificationModule,
   ],
   controllers: [AuthenticationController],
   providers: [
