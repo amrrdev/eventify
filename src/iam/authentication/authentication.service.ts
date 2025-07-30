@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '../../users/repository/user.repository';
 import { HashingService } from '../hashing/hashing.service';
 import { SignUpDto } from './dtos/sign-up.dto';
@@ -9,6 +9,8 @@ import { ConfigType } from '@nestjs/config';
 import { User } from '../../users/schemas/user.schema';
 import { ActiveUserDate } from './interfaces/active-user-data.interface';
 import { randomUUID } from 'node:crypto';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { RedisService } from '../../integrations/redis/redis.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -18,6 +20,7 @@ export class AuthenticationService {
     private readonly userRepository: UserRepository,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
+    private readonly redisService: RedisService,
     @Inject(jwtConfig.KEY) private readonly jwtConfigrations: ConfigType<typeof jwtConfig>,
   ) {}
 
@@ -46,6 +49,33 @@ export class AuthenticationService {
     return await this.generateTokens(existingUser);
   }
 
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
+        Pick<ActiveUserDate, 'sub'> & { refreshTokenId: string }
+      >(refreshTokenDto.refreshToken, {
+        issuer: this.jwtConfigrations.issuer,
+        secret: this.jwtConfigrations.secret,
+        audience: this.jwtConfigrations.audience,
+      });
+
+      const user = await this.userRepository.findById(sub);
+      if (!user) {
+        throw new BadRequestException('we can not find a user with this refresh token');
+      }
+
+      const isVaild = await this.redisService.validate(user._id as string, refreshTokenId);
+      if (!isVaild) {
+        throw new UnauthorizedException('Refresh token is invalid');
+      }
+
+      await this.redisService.inValidate(user._id as string);
+      return this.generateTokens(user);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   private async generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
     const refreshTokenId = randomUUID();
 
@@ -59,6 +89,8 @@ export class AuthenticationService {
         refreshTokenId,
       }),
     ]);
+
+    await this.redisService.insert(user._id as string, refreshTokenId);
 
     return {
       accessToken,

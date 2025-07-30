@@ -7,9 +7,15 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from '../integrations/redis/redis.module';
 
 @Module({
-  imports: [UsersModule, JwtModule.registerAsync(jwtConfig.asProvider()), ConfigModule.forFeature(jwtConfig)],
+  imports: [
+    UsersModule,
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+    ConfigModule.forFeature(jwtConfig),
+    RedisModule,
+  ],
   controllers: [AuthenticationController],
   providers: [
     {

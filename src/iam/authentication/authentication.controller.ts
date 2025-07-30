@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/commo
 import { AuthenticationService } from './authentication.service';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { SignInDto } from './dtos/sign-in.dto';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 @Controller('auth')
 export class AuthenticationController {
@@ -18,8 +19,9 @@ export class AuthenticationController {
     return this.authenticationService.singIn(signInDto);
   }
 
-  // @Get()
-  // async findByEmial(@Body('email') email: string) {
-  //   return await this.authenticationService.findByEmial(email);
-  // }
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authenticationService.refreshToken(refreshTokenDto);
+  }
 }

@@ -13,6 +13,15 @@ import { UserRole } from '../../common/enums/user-role.enum';
 export class UserRepository {
   constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) {}
 
+  async findById(userId: string, options?: { includedPassword: boolean }) {
+    try {
+      const query = this.userModel.findById(userId).select('-__v');
+      return options?.includedPassword ? query.select('+password').lean().exec() : query.lean().exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   async findByEmail(email: string, options?: { includedPassword: boolean }) {
     try {
       const query = this.userModel.findOne({ email }).select('-__v');
