@@ -26,14 +26,12 @@ export class GmailNotificationClient implements NotificationClient {
 
   async send(mailOptions: IMailOptions): Promise<void> {
     try {
-      console.log('start sending');
       const info = await this.transporter.sendMail({
         from: this.notificationConfigrations.gmail.user,
         ...mailOptions,
       });
-      console.log(info);
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(error.message);
     }
   }
 }

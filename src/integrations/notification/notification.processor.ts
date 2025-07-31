@@ -12,7 +12,6 @@ export class NotificatationProcessor extends WorkerHost {
 
   async process(job: Job, token?: string): Promise<any> {
     const mailOptions: IMailOptions = job.data;
-    console.log(mailOptions);
     return await this.notificationService.sendEmail(mailOptions);
   }
 }

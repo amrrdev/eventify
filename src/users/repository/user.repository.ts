@@ -31,6 +31,14 @@ export class UserRepository {
     }
   }
 
+  async updateEmailVerificationStatus(email: string, isVerified: boolean) {
+    try {
+      await this.userModel.updateOne({ email }, { isEmailVerified: isVerified }).lean().exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   async createUser(createUserDto: IUser, role: UserRole = UserRole.User) {
     try {
       const newUser = new this.userModel({ ...createUserDto, role });

@@ -19,6 +19,18 @@ export class RedisService implements OnModuleDestroy {
     return await this.redisClient.del(this.getKey(userId));
   }
 
+  async setOtp(email: string, hashedOtp: string) {
+    return await this.redisClient.setex(`otp:${email}`, 600, hashedOtp);
+  }
+
+  async getOtp(email: string) {
+    return await this.redisClient.get(`otp:${email}`);
+  }
+
+  async invalidateOtp(email: string) {
+    return await this.redisClient.del(`otp:${email}`);
+  }
+
   private getKey(userId: string): string {
     return `user-${userId}`;
   }
