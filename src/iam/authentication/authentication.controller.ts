@@ -5,8 +5,11 @@ import { SignInDto } from './dtos/sign-in.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { EmailVerificationDto } from './dtos/email-verification.dto';
 import { ResendOtpDto } from './dtos/resend-otp.dto';
+import { Auth } from './decorators/auth.decorator';
+import { AuthType } from './enum/auth-type.enum';
 
 @Controller('auth')
+@Auth(AuthType.None)
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
@@ -33,7 +36,7 @@ export class AuthenticationController {
     return this.authenticationService.verifyEmail(emailVerificationDto);
   }
 
-  @Post('resend-otp')
+  @Post('otp/resend')
   @HttpCode(HttpStatus.OK)
   async resendOtp(@Body() resendOtpDto: ResendOtpDto) {
     return this.authenticationService.resendOtp(resendOtpDto);

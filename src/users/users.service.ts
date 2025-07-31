@@ -5,15 +5,9 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
 
   async foo() {
-    return await this.userModel
-      .find({
-        email: 'amsda',
-      })
-      .exec();
+    return await this.userModel.find({}).exec();
   }
 }

@@ -1,1 +1,3 @@
 export const SEND_NOTIFICATION = 'SEND_NOTIFICATION';
+export const REQUEST_USER_KEY = 'USER';
+export const AUTH_TYPE_KEY = 'AUTH_TYPE';
