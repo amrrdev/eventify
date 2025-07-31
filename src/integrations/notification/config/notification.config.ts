@@ -13,10 +13,3 @@ export default registerAs('notification', () => {
     slack: {},
   };
 });
-
-// ABSTRACT NOTIFICATION_SERVICE
-// GMAIL
-// SLACK
-
-// new NotificationService(new Gmail())
-// new NotificationService(new Slack())
