@@ -9,11 +9,17 @@ import databaseConfig from './config/database.config';
 import { RedisModule } from './integrations/redis/redis.module';
 import { NotificationService } from './integrations/notification/notification.service';
 import { NotificationModule } from './integrations/notification/notification.module';
+import { BullmqModule } from './integrations/bullmq/bullmq.module';
+import { BullModule } from '@nestjs/bullmq';
+import notificationConfig from './integrations/notification/config/notification.config';
+import redisConfig from './integrations/redis/config/redis.config';
+import bullmqConfig from './integrations/bullmq/config/bullmq.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [databaseConfig, notificationConfig, redisConfig, bullmqConfig],
     }),
     ConfigModule.forFeature(databaseConfig),
     MongooseModule.forRootAsync({
@@ -41,6 +47,7 @@ import { NotificationModule } from './integrations/notification/notification.mod
     UsersModule,
     RedisModule,
     NotificationModule,
+    BullmqModule,
   ],
   controllers: [AppController],
   providers: [AppService],

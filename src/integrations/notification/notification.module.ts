@@ -1,12 +1,19 @@
 import { Module } from '@nestjs/common';
-import { NOTIFICATION_CLIENT } from './notification.constants';
+import { NOTIFICATION_CLIENT, NOTIFICATION_QUEUE } from './notification.constants';
 import notificationConfig from './config/notification.config';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { NotificationService } from './notification.service';
 import { GmailNotificationClient } from './clients/gmail-notification-client.service';
+import { BullModule } from '@nestjs/bullmq';
+import { NotificatationProcessor } from './notification.processor';
 
 @Module({
-  imports: [ConfigModule.forFeature(notificationConfig)],
+  imports: [
+    ConfigModule.forFeature(notificationConfig),
+    BullModule.registerQueue({
+      name: NOTIFICATION_QUEUE,
+    }),
+  ],
   providers: [
     {
       provide: NOTIFICATION_CLIENT,
@@ -23,7 +30,8 @@ import { GmailNotificationClient } from './clients/gmail-notification-client.ser
     },
     NotificationService,
     GmailNotificationClient,
+    NotificatationProcessor,
   ],
-  exports: [NotificationService],
+  exports: [NotificationService, BullModule],
 })
 export class NotificationModule {}

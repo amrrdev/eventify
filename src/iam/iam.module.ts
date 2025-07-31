@@ -9,6 +9,7 @@ import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from '../integrations/redis/redis.module';
 import { NotificationModule } from '../integrations/notification/notification.module';
+import { BullmqModule } from '../integrations/bullmq/bullmq.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { NotificationModule } from '../integrations/notification/notification.mo
     ConfigModule.forFeature(jwtConfig),
     RedisModule,
     NotificationModule,
+    BullmqModule,
   ],
   controllers: [AuthenticationController],
   providers: [

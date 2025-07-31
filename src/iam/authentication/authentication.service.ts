@@ -12,17 +12,19 @@ import { randomUUID } from 'node:crypto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RedisService } from '../../integrations/redis/redis.service';
 import { NotificationService } from '../../integrations/notification/notification.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { NOTIFICATION_CLIENT, NOTIFICATION_QUEUE } from '../../integrations/notification/notification.constants';
+import { Queue } from 'bullmq';
+import { SEND_NOTIFICATION } from '../iam.constants';
 
 @Injectable()
 export class AuthenticationService {
-  static nofr = 0;
-  static comp = 0;
   constructor(
     private readonly userRepository: UserRepository,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
-    private readonly notificationService: NotificationService,
+    @InjectQueue(NOTIFICATION_QUEUE) private readonly notificationQueue: Queue,
     @Inject(jwtConfig.KEY) private readonly jwtConfigrations: ConfigType<typeof jwtConfig>,
   ) {}
 
@@ -34,22 +36,23 @@ export class AuthenticationService {
 
     const { password, ...userData } = signUpDto;
     const hashedPassword = await this.hashingService.hash(password);
-    // await this.notificationService.sendEmial({ to: 'amrrdev@gmail.com', subject: 'Test', text: 'Hi, Amr' });
     const newUser = await this.userRepository.createUser({ ...userData, password: hashedPassword });
 
     return newUser;
   }
 
   async singIn(signInDto: SignInDto) {
-    console.log(`request number ${++AuthenticationService.nofr}`);
     const existingUser = await this.userRepository.findByEmail(signInDto.email);
     if (!existingUser || !(await this.hashingService.compare(signInDto.password, existingUser.password))) {
       throw new ConflictException('Invalid email or password');
     }
 
-    // TODO: should use some sort of queue to send notificatons insted of making users waitssq
-    await this.notificationService.sendEmail({ to: 'amrrdev@gmail.com', subject: 'Test', text: 'Hi, Amr' });
-    console.log(`completed ${++AuthenticationService.comp}`);
+    await this.notificationQueue.add(SEND_NOTIFICATION, {
+      to: 'amrrdev@gmail.com',
+      subject: 'Test',
+      text: 'Hi, Amr',
+    });
+
     return await this.generateTokens(existingUser);
   }
 
