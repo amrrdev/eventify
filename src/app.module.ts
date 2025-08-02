@@ -14,6 +14,7 @@ import { BullModule } from '@nestjs/bullmq';
 import notificationConfig from './integrations/notification/config/notification.config';
 import redisConfig from './integrations/redis/config/redis.config';
 import bullmqConfig from './integrations/bullmq/config/bullmq.config';
+import { ApiKeyModule } from './api-key/api-key.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import bullmqConfig from './integrations/bullmq/config/bullmq.config';
     RedisModule,
     NotificationModule,
     BullmqModule,
+    ApiKeyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

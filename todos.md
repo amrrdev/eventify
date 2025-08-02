@@ -16,13 +16,19 @@
 - [x] Create endpoint for sign-up with it's functionality
 - [x] Create endpoint for sign-in with it's functionality
 - [x] Implement access and refresh token
-- [ ] Implement refresh token endpoint
-- [ ] Implement Redis and refresh token rotation
+- [x] Implement refresh token endpoint
+- [x] Implement Redis and refresh token rotation
 - [ ] Implement Google sign-in and sign-up
+
+### API Key
+
+- [ ] Set up Api Key schema
+- [ ] Set up Api key module
+- [ ] Create `/v1/api-key` POST endpoint
+- [ ] Create `/v1/api-key` DELETE endpoint
 
 ### Event Ingestion API
 
-- [ ] Set up Express.js server with basic routing
 - [ ] Create `/v1/events` POST endpoint
 - [ ] Implement API key validation middleware
 - [ ] Add rate limiting per customer
@@ -31,10 +37,10 @@
 
 ### Message Queue
 
-- [ ] Set up Redis server
+- [x] Set up Redis server
 - [ ] Implement event queuing system
-- [ ] Create background worker process
-- [ ] Test queue performance under load
+- [x] Create background worker process
+- [x] Test queue performance under load
 - [ ] Add queue monitoring/health checks
 - [ ] Implement retry logic for failed events
 
