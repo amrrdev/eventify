@@ -20,12 +20,19 @@
 - [x] Implement Redis and refresh token rotation
 - [ ] Implement Google sign-in and sign-up
 
+### gRPC
+
+- [ ] handle bidirectial stream server and client
+- [ ] implement interceptor for extracting api-key from metadata
+- [ ] this interceptor should validate the api
+- [ ] make redis calculate the usageCound and usageLimit
+
 ### API Key
 
-- [ ] Set up Api Key schema
-- [ ] Set up Api key module
-- [ ] Create `/v1/api-key` POST endpoint
-- [ ] Create `/v1/api-key` DELETE endpoint
+- [x] Set up Api Key schema
+- [x] Set up Api key module
+- [x] Create `/v1/api-key` POST endpoint
+- [x] Create `/v1/api-key` DELETE endpoint
 
 ### Event Ingestion API
 

@@ -15,6 +15,7 @@ import notificationConfig from './integrations/notification/config/notification.
 import redisConfig from './integrations/redis/config/redis.config';
 import bullmqConfig from './integrations/bullmq/config/bullmq.config';
 import { ApiKeyModule } from './api-key/api-key.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { ApiKeyModule } from './api-key/api-key.module';
     NotificationModule,
     BullmqModule,
     ApiKeyModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
