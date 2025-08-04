@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REDIS_CLIENT } from '../integrations/redis/redis.constants';
 import * as Redis from 'ioredis';
+import { ApiKeyStatus } from './types/api-key.types';
 
 @Injectable()
 export class ApiKeyUsageService {
@@ -11,9 +12,7 @@ export class ApiKeyUsageService {
     await this.redis.hmset(key, apiKeyStatus);
   }
 
-  async incrementUsage(
-    apiKeyId: string,
-  ): Promise<{ success: boolean; limitExceeded: boolean; usageCount: number; usageLimit: number }> {
+  async incrementUsage(apiKeyId: string): Promise<Omit<ApiKeyStatus, 'active'> & { limitExceeded: boolean }> {
     const key = this.getKeyName(apiKeyId);
 
     const apiKeyStatus = await this.redis.hgetall(key);
@@ -27,7 +26,7 @@ export class ApiKeyUsageService {
 
     if (currentUsage >= usageLimit) {
       return {
-        success: false,
+        key: apiKeyStatus.key,
         limitExceeded: true,
         usageCount: currentUsage,
         usageLimit: usageLimit,
@@ -37,21 +36,16 @@ export class ApiKeyUsageService {
     const newUsage = await this.redis.hincrby(key, 'usageCount', 1);
 
     return {
-      success: true,
+      key: apiKeyStatus.key,
       limitExceeded: false,
       usageCount: newUsage,
       usageLimit: usageLimit,
     };
   }
 
-  // Helper method to get current usage without incrementing
-  async getUsage(apiKeyId: string): Promise<ApiKeyStatus | null> {
+  async getUsage(apiKeyId: string): Promise<ApiKeyStatus> {
     const key = this.getKeyName(apiKeyId);
     const apiKeyStatus = await this.redis.hgetall(key);
-
-    if (!apiKeyStatus || Object.keys(apiKeyStatus).length === 0) {
-      return null;
-    }
 
     return {
       ...apiKeyStatus,
@@ -68,10 +62,4 @@ export class ApiKeyUsageService {
   private getKeyName(apiKeyId: string) {
     return `api_key:${apiKeyId}`;
   }
-}
-
-export interface ApiKeyStatus {
-  usageCount: number;
-  usageLimit: number;
-  active: boolean;
 }

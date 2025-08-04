@@ -7,9 +7,20 @@ import { Model } from 'mongoose';
 export class ApiKeyRepository {
   constructor(@InjectModel(ApiKey.name) private readonly ApiKeyModel: Model<ApiKeyDocument>) {}
 
+  updateApiKeyUsage(key: string, apiKeyUsageCount: number) {
+    try {
+      return this.ApiKeyModel.findOneAndUpdate({ key }, { usageCount: apiKeyUsageCount }).lean().exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   async findApiKey(data: { apiKey: string }) {
     try {
-      return this.ApiKeyModel.findOne({ key: data.apiKey }).select('-_id active usageCount usageLimit').lean().exec();
+      return this.ApiKeyModel.findOne({ key: data.apiKey })
+        .select('-_id key active usageCount usageLimit')
+        .lean()
+        .exec();
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

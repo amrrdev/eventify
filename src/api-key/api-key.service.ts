@@ -12,6 +12,10 @@ export class ApiKeyService {
     return await this.apiKeyRepository.findUserApiKeys({ ownerId });
   }
 
+  async updateApiKeyUsage(key: string, apiKeyUsageCount: number) {
+    return await this.apiKeyRepository.updateApiKeyUsage(key, apiKeyUsageCount);
+  }
+
   async validateApiKey(dto: ValidateApiKeyDto): Promise<ApiKeyStatus> {
     const apiKey: ApiKeyStatus | null = await this.apiKeyRepository.findApiKey(dto);
 
