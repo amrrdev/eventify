@@ -12,6 +12,14 @@ async function bootstrap() {
       package: 'events',
       protoPath: join(__dirname, './proto/events.proto'),
       url: '0.0.0.0:50051',
+      loader: {
+        keepCase: true,
+        longs: String,
+        enums: String,
+        defaults: true,
+        oneofs: true,
+        json: true,
+      },
     },
   });
 

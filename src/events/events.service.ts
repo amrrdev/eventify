@@ -4,15 +4,18 @@ import { finalize, Observable, Subject } from 'rxjs';
 import { RpcException } from '@nestjs/microservices';
 import { Metadata } from '@grpc/grpc-js';
 import { ApiKeyUsageService } from '../api-key/api-key-usage.service';
-import { API_KEY_ID } from './events.constants';
+import { API_KEY_ID, API_USAGE_TRACKER_QUEUE } from './events.constants';
 import { ApiKeyService } from '../api-key/api-key.service';
 import { ApiKeyStatus } from '../api-key/types/api-key.types';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class EventsService {
   constructor(
     private readonly apiKeyService: ApiKeyService,
     private readonly apiKeyUsageService: ApiKeyUsageService,
+    @InjectQueue(API_USAGE_TRACKER_QUEUE) private readonly apiKeyUsageQueue: Queue,
   ) {}
   latestUsageResult: Omit<ApiKeyStatus, 'active'> | null = null;
 
@@ -22,8 +25,11 @@ export class EventsService {
     const request$ = requests.pipe(
       finalize(() => {
         if (this.latestUsageResult) {
-          this.apiKeyService
-            .updateApiKeyUsage(this.latestUsageResult.key, this.latestUsageResult.usageCount)
+          this.apiKeyUsageQueue
+            .add('save-usage', {
+              key: this.latestUsageResult.key,
+              usageCount: this.latestUsageResult.usageCount,
+            })
             .then(() => responseSubject.complete())
             .catch((err) => console.error('Persist failed', err));
         } else {
@@ -34,6 +40,12 @@ export class EventsService {
 
     const subscription = request$.subscribe({
       next: async (event) => {
+        try {
+          const myJson = JSON.parse(event.payload);
+        } catch (error) {
+          console.log(error);
+        }
+
         const apiKeyId = metadata.get(API_KEY_ID)[0].toString();
         const usageResult = await this.apiKeyUsageService.incrementUsage(apiKeyId);
         this.latestUsageResult = usageResult;

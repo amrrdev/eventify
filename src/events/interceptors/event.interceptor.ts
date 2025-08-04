@@ -28,7 +28,7 @@ export class EventInterceptor implements NestInterceptor {
       const apiKeyId = randomUUID();
       metadata.set(API_KEY_ID, apiKeyId);
 
-      await this.apiKeyUsageService.registerApiKey(apiKeyId, validApiKey);
+      await this.apiKeyUsageService.initializeApiKeyUsage(apiKeyId, validApiKey);
 
       return next.handle();
     } catch (error) {

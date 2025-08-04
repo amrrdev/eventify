@@ -7,16 +7,14 @@
 /* eslint-disable */
 import type { Metadata } from "@grpc/grpc-js";
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { wrappers } from "protobufjs";
 import { Observable } from "rxjs";
-import { Struct } from "../../google/protobuf/struct";
 
 export const protobufPackage = "events";
 
 export interface EventRequest {
   eventName: string;
   timestamp: string;
-  data: { [key: string]: any } | undefined;
+  payload: string;
 }
 
 export interface EventResponse {
@@ -25,8 +23,6 @@ export interface EventResponse {
 }
 
 export const EVENTS_PACKAGE_NAME = "events";
-
-wrappers[".google.protobuf.Struct"] = { fromObject: Struct.wrap, toObject: Struct.unwrap } as any;
 
 export interface EventsServiceClient {
   eventStream(request: Observable<EventRequest>, metadata?: Metadata): Observable<EventResponse>;
