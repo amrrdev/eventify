@@ -11,15 +11,15 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { EVENT_PROCESS_QUEUE } from '../events-http/events-http.constants';
 import { StreamEventBatcher } from './stream-event-batcher.service';
+import { StreamWebSocketBatcher } from '../websocket/stream-websocket-batcher.service';
 
 @Injectable()
 export class EventsService {
   constructor(
-    private readonly apiKeyService: ApiKeyService,
     private readonly apiKeyUsageService: ApiKeyUsageService,
     @InjectQueue(API_USAGE_TRACKER_QUEUE) private readonly apiKeyUsageQueue: Queue,
-    @InjectQueue(EVENT_PROCESS_QUEUE) private readonly eventHttoQueue: Queue,
     private readonly streamEventBatcher: StreamEventBatcher,
+    private readonly streamWebSocketBatcher: StreamWebSocketBatcher,
   ) {}
   latestUsageResult: Omit<ApiKeyStatus, 'active'> | null = null;
 
@@ -58,8 +58,8 @@ export class EventsService {
           subscription.unsubscribe();
           return;
         }
-        // console.log(event);
         this.streamEventBatcher.addStreamEvent({ ownerId, ...event });
+        this.streamWebSocketBatcher.addEvent(ownerId, event);
         responseSubject.next({
           status: 'received',
           message: 'ok',

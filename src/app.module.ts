@@ -17,6 +17,7 @@ import bullmqConfig from './integrations/bullmq/config/bullmq.config';
 import { ApiKeyModule } from './api-key/api-key.module';
 import { EventsModule } from './events/events.module';
 import { EventsHttpModule } from './events-http/events-http.module';
+import { EventWebSocketModule } from './websocket/events-websocket.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { EventsHttpModule } from './events-http/events-http.module';
     ApiKeyModule,
     EventsModule,
     EventsHttpModule,
+    EventWebSocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
