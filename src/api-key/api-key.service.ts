@@ -16,8 +16,8 @@ export class ApiKeyService {
     return await this.apiKeyRepository.updateApiKeyUsage(key, apiKeyUsageCount);
   }
 
-  async validateApiKey(dto: ValidateApiKeyDto): Promise<ApiKeyStatus> {
-    const apiKey: ApiKeyStatus | null = await this.apiKeyRepository.findApiKey(dto);
+  async validateApiKey(dto: ValidateApiKeyDto) {
+    const apiKey = await this.apiKeyRepository.findApiKey(dto);
 
     if (!apiKey) {
       throw new BadRequestException('Invalid API key. Please provide a valid key.');

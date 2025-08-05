@@ -11,6 +11,7 @@ export class EventHttpProcessor extends WorkerHost {
 
   async process(job: Job, token?: string): Promise<any> {
     const { events } = job.data;
+    console.log('inside event procvcessing queue');
     const parsedEvents = events.map((event) => ({
       ...event,
       payload: JSON.parse(event.payload),

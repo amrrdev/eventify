@@ -9,7 +9,6 @@ export class StreamEventBatcher {
   private buffer: (ICreateEvent & { receivedAt: number })[];
   private batch: number;
   private flushInterval: number;
-  private ownerId = '688b82ca87cb6c572cd9df0d';
 
   constructor(@InjectQueue(EVENT_PROCESS_QUEUE) private readonly eventProcessQueue: Queue) {
     this.buffer = [];
@@ -22,11 +21,8 @@ export class StreamEventBatcher {
   addStreamEvent(event: ICreateEvent) {
     this.buffer.push({
       ...event,
-      ownerId: this.ownerId,
-      payload: event.payload,
       receivedAt: Date.now(),
     });
-
     if (this.buffer.length >= this.batch) {
       this.flushBatch();
     }
@@ -37,7 +33,6 @@ export class StreamEventBatcher {
 
     const batchs = [...this.buffer];
     this.buffer = [];
-
     await this.eventProcessQueue.add('event-processing', {
       events: batchs,
     });

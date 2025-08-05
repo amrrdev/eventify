@@ -14,6 +14,7 @@ export class ApiKeyUsageService {
     if (!exists) {
       await this.redis.hset(key, {
         key: apiKeyStatus.key,
+        ownerId: apiKeyStatus.ownerId,
         usageCount: apiKeyStatus.usageCount,
         usageLimit: apiKeyStatus.usageLimit,
         active: apiKeyStatus.active,
@@ -57,41 +58,11 @@ export class ApiKeyUsageService {
 
     return {
       key: currentUsage.key,
+      ownerId: currentUsage.ownerId,
       usageCount,
       usageLimit,
-      active: currentUsage.active === '1',
+      active: Boolean(currentUsage.active),
       limitExceeded: usageCount > usageLimit,
-    };
-  }
-
-  async incrementUsage1(apiKeyId: string): Promise<Omit<ApiKeyStatus, 'active'> & { limitExceeded: boolean }> {
-    const key = this.getKeyName(apiKeyId);
-
-    const apiKeyStatus = await this.redis.hgetall(key);
-
-    if (!apiKeyStatus || Object.keys(apiKeyStatus).length === 0) {
-      throw new Error(`API key ${apiKeyId} not found`);
-    }
-
-    const currentUsage = parseInt(apiKeyStatus.usageCount) || 0;
-    const usageLimit = parseInt(apiKeyStatus.usageLimit) || 0;
-
-    if (currentUsage >= usageLimit) {
-      return {
-        key: apiKeyStatus.key,
-        limitExceeded: true,
-        usageCount: currentUsage,
-        usageLimit: usageLimit,
-      };
-    }
-
-    const newUsage = await this.redis.hincrby(key, 'usageCount', 1);
-
-    return {
-      key: apiKeyStatus.key,
-      limitExceeded: false,
-      usageCount: newUsage,
-      usageLimit: usageLimit,
     };
   }
 
@@ -108,6 +79,7 @@ export class ApiKeyUsageService {
 
     return {
       key: usage.key,
+      ownerId: usage.ownerId,
       usageCount,
       usageLimit,
       active: usage.active === '1',

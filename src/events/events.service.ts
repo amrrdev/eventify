@@ -4,7 +4,7 @@ import { finalize, Observable, Subject } from 'rxjs';
 import { RpcException } from '@nestjs/microservices';
 import { Metadata } from '@grpc/grpc-js';
 import { ApiKeyUsageService } from '../api-key/api-key-usage.service';
-import { API_KEY_ID, API_USAGE_TRACKER_QUEUE } from './events.constants';
+import { API_KEY_ID, API_USAGE_TRACKER_QUEUE, OWNER_ID } from './events.constants';
 import { ApiKeyService } from '../api-key/api-key.service';
 import { ApiKeyStatus } from '../api-key/types/api-key.types';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -45,9 +45,10 @@ export class EventsService {
     const subscription = request$.subscribe({
       next: async (event) => {
         const apiKeyId = metadata.get(API_KEY_ID)[0].toString();
+        const ownerId = metadata.get(OWNER_ID)[0].toString();
+
         // ! ! ! Race condition dedicated
         const usageResult = await this.apiKeyUsageService.incrementUsage(apiKeyId);
-        console.log(usageResult.usageCount);
         this.latestUsageResult = usageResult;
 
         if (usageResult.limitExceeded) {
@@ -59,14 +60,8 @@ export class EventsService {
           subscription.unsubscribe();
           return;
         }
-
-        try {
-          const ownerId = '688b82ca87cb6c572cd9df0d';
-          this.streamEventBatcher.addStreamEvent({ ownerId, ...event });
-        } catch (error) {
-          console.log(error);
-        }
-
+        // console.log(event);
+        this.streamEventBatcher.addStreamEvent({ ownerId, ...event });
         responseSubject.next({
           status: 'received',
           message: 'ok',

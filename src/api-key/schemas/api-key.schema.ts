@@ -1,5 +1,6 @@
 import { Schema as MongooseSchema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { ApiKeyStatus } from '../types/api-key.types';
 
 @MongooseSchema({ collection: 'api_keys', timestamps: true })
 export class ApiKey extends Document {
@@ -26,12 +27,18 @@ export class ApiKey extends Document {
 export type ApiKeyDocument = ApiKey & Document;
 export const ApikeySchema = SchemaFactory.createForClass(ApiKey);
 
-// ApikeySchema.index(
-//   {
-//     key: 1,
-//   },
-//   {
-//     unique: true,
-//     background: true,
-//   },
-// );
+ApikeySchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (_doc, ret: ApiKey) {
+    // Create a new object with the desired type
+    const transformed: ApiKeyStatus = {
+      key: ret.key,
+      ownerId: ret.ownerId.toString(), // Convert ObjectId to string
+      usageCount: ret.usageCount,
+      usageLimit: ret.usageLimit,
+      active: ret.active,
+    };
+    return transformed;
+  },
+});

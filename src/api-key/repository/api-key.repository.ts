@@ -1,7 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ApiKey, ApiKeyDocument } from '../schemas/api-key.schema';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
+import { ApiKeyStatus } from '../types/api-key.types';
 
 @Injectable()
 export class ApiKeyRepository {
@@ -17,10 +18,12 @@ export class ApiKeyRepository {
 
   async findApiKey(data: { apiKey: string }) {
     try {
-      return this.ApiKeyModel.findOne({ key: data.apiKey })
-        .select('-_id key active usageCount usageLimit')
+      const apiKey = this.ApiKeyModel.findOne({ key: data.apiKey })
+        .select('-_id key ownerId active usageCount usageLimit')
         .lean()
         .exec();
+
+      return apiKey;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
