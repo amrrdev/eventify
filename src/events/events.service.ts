@@ -47,10 +47,8 @@ export class EventsService {
         const apiKeyId = metadata.get(API_KEY_ID)[0].toString();
         const ownerId = metadata.get(OWNER_ID)[0].toString();
 
-        // ! ! ! Race condition dedicated
         const usageResult = await this.apiKeyUsageService.incrementUsage(apiKeyId);
         this.latestUsageResult = usageResult;
-
         if (usageResult.limitExceeded) {
           responseSubject.next({
             status: 'error',

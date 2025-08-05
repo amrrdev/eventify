@@ -1,11 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { REDIS_CLIENT } from '../integrations/redis/redis.constants';
 import * as Redis from 'ioredis';
 import { ApiKeyStatus } from './types/api-key.types';
+import { INCREMENT_USAGE_SCRIPT } from './constants/lua-scripts.constant';
 
 @Injectable()
-export class ApiKeyUsageService {
+export class ApiKeyUsageService implements OnModuleInit {
+  private scriptSha: string;
   constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis.Redis) {}
+
+  async onModuleInit() {
+    this.scriptSha = (await this.redis.script('LOAD', INCREMENT_USAGE_SCRIPT)) as string;
+  }
 
   async initializeApiKeyUsage(apiKeyId: string, apiKeyStatus: ApiKeyStatus): Promise<void> {
     const key = this.getKeyName(apiKeyId);
@@ -36,32 +42,45 @@ export class ApiKeyUsageService {
   async incrementUsage(apiKeyId: string): Promise<ApiKeyStatus & { limitExceeded: boolean }> {
     const key = this.getKeyName(apiKeyId);
 
-    const pipeline = this.redis.pipeline();
-    pipeline.hincrby(key, 'usageCount', 1);
-    pipeline.hgetall(key);
+    const [apiKey, ownerId, usageCountStr, usageLimitStr, active] = (await this.redis.evalsha(
+      this.scriptSha,
+      1,
+      key,
+    )) as string[];
 
-    const results = await pipeline.exec();
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // NOTE: This approach is **not atomic** and may lead to a **race condition**
+    // if multiple workers switch context between the `HINCRBY` and `HGETALL` operations.
+    // Since the pipeline does not guarantee atomicity across multiple commands,
+    // another worker mght modify the hash between these two operations,
+    // causing inaccurate or stale read    // const pipeline = this.redis.pipeline();
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (!results || results.length < 2) {
-      throw new Error('Failed to increment usage');
-    }
+    // // pipeline.hincrby(key, 'usageCount', 1);
+    // // pipeline.hgetall(key);
 
-    const [incrResult, getResult] = results;
+    // const results = await pipeline.exec();
 
-    if (incrResult[0] || getResult[0]) {
-      throw new Error('Redis operation failed');
-    }
+    // if (!results || results.length < 2) {
+    //   throw new Error('Failed to increment usage');
+    // }
 
-    const currentUsage = getResult[1] as Record<string, string>;
-    const usageCount = parseInt(currentUsage.usageCount, 10);
-    const usageLimit = parseInt(currentUsage.usageLimit, 10);
+    // const [incrResult, getResult] = results;
+
+    // if (incrResult[0] || getResult[0]) {
+    //   throw new Error('Redis operation failed');
+    // }
+
+    // const currentUsage = getResult[1] as Record<string, string>;
+    const usageCount = parseInt(usageCountStr, 10);
+    const usageLimit = parseInt(usageCountStr, 10);
 
     return {
-      key: currentUsage.key,
-      ownerId: currentUsage.ownerId,
+      key: apiKey,
+      ownerId,
       usageCount,
       usageLimit,
-      active: Boolean(currentUsage.active),
+      active: Boolean(active),
       limitExceeded: usageCount > usageLimit,
     };
   }
