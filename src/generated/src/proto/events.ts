@@ -13,7 +13,6 @@ export const protobufPackage = "events";
 
 export interface EventRequest {
   eventName: string;
-  timestamp: string;
   payload: string;
 }
 

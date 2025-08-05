@@ -16,6 +16,7 @@ import redisConfig from './integrations/redis/config/redis.config';
 import bullmqConfig from './integrations/bullmq/config/bullmq.config';
 import { ApiKeyModule } from './api-key/api-key.module';
 import { EventsModule } from './events/events.module';
+import { EventsHttpModule } from './events-http/events-http.module';
 
 @Module({
   imports: [
@@ -33,14 +34,14 @@ import { EventsModule } from './events/events.module';
           autoCreate: true,
 
           // Connection Pool Configuration
-          maxPoolSize: 50,
+          maxPoolSize: 100,
           minPoolSize: 10,
-
-          retryWrites: true,
-          retryReads: true,
 
           // Read preference
           readPreference: 'primary',
+          writeConcern: {
+            w: 0,
+          },
         };
       },
       inject: [ConfigService],
@@ -52,6 +53,7 @@ import { EventsModule } from './events/events.module';
     BullmqModule,
     ApiKeyModule,
     EventsModule,
+    EventsHttpModule,
   ],
   controllers: [AppController],
   providers: [AppService],

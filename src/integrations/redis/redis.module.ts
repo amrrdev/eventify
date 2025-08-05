@@ -16,6 +16,8 @@ import { RedisService } from './redis.service';
           host: redisConfigrations.host,
           // password: redisConfigrations.password, // TODO: uncomment in production
           maxRetriesPerRequest: null,
+          family: 6,
+          // maxLoadingTimeout: 5000,
         });
       },
 

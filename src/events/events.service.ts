@@ -9,6 +9,8 @@ import { ApiKeyService } from '../api-key/api-key.service';
 import { ApiKeyStatus } from '../api-key/types/api-key.types';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { EVENT_PROCESS_QUEUE } from '../events-http/events-http.constants';
+import { StreamEventBatcher } from './stream-event-batcher.service';
 
 @Injectable()
 export class EventsService {
@@ -16,6 +18,8 @@ export class EventsService {
     private readonly apiKeyService: ApiKeyService,
     private readonly apiKeyUsageService: ApiKeyUsageService,
     @InjectQueue(API_USAGE_TRACKER_QUEUE) private readonly apiKeyUsageQueue: Queue,
+    @InjectQueue(EVENT_PROCESS_QUEUE) private readonly eventHttoQueue: Queue,
+    private readonly streamEventBatcher: StreamEventBatcher,
   ) {}
   latestUsageResult: Omit<ApiKeyStatus, 'active'> | null = null;
 
@@ -40,14 +44,10 @@ export class EventsService {
 
     const subscription = request$.subscribe({
       next: async (event) => {
-        try {
-          const myJson = JSON.parse(event.payload);
-        } catch (error) {
-          console.log(error);
-        }
-
         const apiKeyId = metadata.get(API_KEY_ID)[0].toString();
+        // ! ! ! Race condition dedicated
         const usageResult = await this.apiKeyUsageService.incrementUsage(apiKeyId);
+        console.log(usageResult.usageCount);
         this.latestUsageResult = usageResult;
 
         if (usageResult.limitExceeded) {
@@ -58,6 +58,13 @@ export class EventsService {
 
           subscription.unsubscribe();
           return;
+        }
+
+        try {
+          const ownerId = '688b82ca87cb6c572cd9df0d';
+          this.streamEventBatcher.addStreamEvent({ ownerId, ...event });
+        } catch (error) {
+          console.log(error);
         }
 
         responseSubject.next({
