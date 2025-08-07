@@ -11,9 +11,21 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "events";
 
+export enum Severity {
+  SEVERITY_UNSPECIFIED = 0,
+  INFO = 1,
+  WARN = 2,
+  ERROR = 3,
+  UNRECOGNIZED = -1,
+}
+
 export interface EventRequest {
   eventName: string;
   payload: string;
+  timestamp: string;
+  tags: string[];
+  category?: string | undefined;
+  severity?: Severity | undefined;
 }
 
 export interface EventResponse {

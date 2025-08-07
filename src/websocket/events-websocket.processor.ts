@@ -1,5 +1,5 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { EventHttpProcessor } from '../events-http/event-http.processor';
+import { EventHttpProcessor } from '../events/event-to-db.processor';
 import { Job } from 'bullmq';
 import { EVENT_PROCESS_QUEUE } from '../events-http/events-http.constants';
 import { EventWebSocketGateway } from './events-websocket.gateway';

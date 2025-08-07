@@ -10,10 +10,21 @@ service EventsService {
 
 message EventRequest {
   string eventName = 1;
-  string payload = 3;
+  string payload = 2;
+  string timestamp = 3;
+  repeated string tags = 4;
+  optional string category = 5;
+  optional Severity severity = 6;
 }
 
 message EventResponse {
   string status = 1;
   string message = 2;
+}
+
+enum Severity {
+  SEVERITY_UNSPECIFIED = 0;
+  INFO = 1;
+  WARN = 2;
+  ERROR = 3;
 }

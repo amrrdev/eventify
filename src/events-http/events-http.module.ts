@@ -6,7 +6,7 @@ import { Event, EventSchema } from './schemas/event.schema';
 import { BullModule } from '@nestjs/bullmq';
 import { EVENT_PROCESS_QUEUE } from './events-http.constants';
 import { EventHttpRepository } from './repository/event-http.repository';
-import { EventHttpProcessor } from './event-http.processor';
+import { EventHttpProcessor } from '../events/event-to-db.processor';
 
 @Module({
   imports: [

@@ -1,20 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventRequest, EventResponse } from '../generated/src/proto/events';
 import { finalize, Observable, Subject } from 'rxjs';
 import { RpcException } from '@nestjs/microservices';
 import { Metadata } from '@grpc/grpc-js';
 import { ApiKeyUsageService } from '../api-key/api-key-usage.service';
 import { API_KEY_ID, API_USAGE_TRACKER_QUEUE, OWNER_ID } from './events.constants';
-import { ApiKeyService } from '../api-key/api-key.service';
 import { ApiKeyStatus } from '../api-key/types/api-key.types';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { EVENT_PROCESS_QUEUE } from '../events-http/events-http.constants';
 import { StreamEventBatcher } from './stream-event-batcher.service';
 import { StreamWebSocketBatcher } from '../websocket/stream-websocket-batcher.service';
 
 @Injectable()
 export class EventsService {
+  private readonly logger = new Logger(EventsService.name);
   constructor(
     private readonly apiKeyUsageService: ApiKeyUsageService,
     @InjectQueue(API_USAGE_TRACKER_QUEUE) private readonly apiKeyUsageQueue: Queue,

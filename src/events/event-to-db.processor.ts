@@ -1,7 +1,7 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { EVENT_PROCESS_QUEUE } from './events-http.constants';
-import { EventsHttpService } from './events-http.service';
+import { EVENT_PROCESS_QUEUE } from '../events-http/events-http.constants';
+import { EventsHttpService } from '../events-http/events-http.service';
 
 @Processor(EVENT_PROCESS_QUEUE, { concurrency: 10 })
 export class EventHttpProcessor extends WorkerHost {
