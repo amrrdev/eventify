@@ -4,7 +4,6 @@ This document explains the backend WebSocket endpoints for metrics, the structur
 
 ---
 
-
 ## 1. WebSocket Endpoint
 
 - **URL:** `ws://<API_HOST>/ws/metrics` (or as configured)
