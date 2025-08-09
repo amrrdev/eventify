@@ -10,6 +10,8 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { StreamEventBatcher } from './stream-event-batcher.service';
 import { StreamWebSocketBatcher } from '../websocket/stream-websocket-batcher.service';
+import { MetricsAggregationService } from '../metrics/metrics-aggregation.service';
+import { METRIC_AGGREGATION_QUEUE } from '../metrics/constants/metrics.constant';
 
 @Injectable()
 export class EventsService {
@@ -17,8 +19,10 @@ export class EventsService {
   constructor(
     private readonly apiKeyUsageService: ApiKeyUsageService,
     @InjectQueue(API_USAGE_TRACKER_QUEUE) private readonly apiKeyUsageQueue: Queue,
+    @InjectQueue(METRIC_AGGREGATION_QUEUE) private readonly metricsAggregationQueue: Queue,
     private readonly streamEventBatcher: StreamEventBatcher,
     private readonly streamWebSocketBatcher: StreamWebSocketBatcher,
+    private readonly metricsAggregationService: MetricsAggregationService,
   ) {}
   latestUsageResult: Omit<ApiKeyStatus, 'active'> | null = null;
 
@@ -59,6 +63,14 @@ export class EventsService {
         }
         this.streamEventBatcher.addStreamEvent({ ownerId, ...event });
         this.streamWebSocketBatcher.addEvent(ownerId, event);
+
+        console.log(`📤 Adding metrics aggregation job for owner ${ownerId}, event: ${event.eventName}`);
+        await this.metricsAggregationQueue.add('process-aggregation', {
+          ownerId,
+          event,
+        });
+        console.log(`✅ Metrics aggregation job added successfully`);
+        // await this.metricsAggregationService.processEvent(event);
         responseSubject.next({
           status: 'received',
           message: 'ok',

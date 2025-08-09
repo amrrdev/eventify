@@ -18,6 +18,7 @@ import { ApiKeyModule } from './api-key/api-key.module';
 import { EventsModule } from './events/events.module';
 import { EventsHttpModule } from './events-http/events-http.module';
 import { EventWebSocketModule } from './websocket/events-websocket.module';
+import { MetricsAggregationModule } from './metrics/metrics-aggregation.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { EventWebSocketModule } from './websocket/events-websocket.module';
     EventsModule,
     EventsHttpModule,
     EventWebSocketModule,
+    MetricsAggregationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

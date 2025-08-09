@@ -1,24 +1,33 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { EventHttpProcessor } from '../events/event-to-db.processor';
 import { Job } from 'bullmq';
-import { EVENT_PROCESS_QUEUE } from '../events-http/events-http.constants';
 import { EventWebSocketGateway } from './events-websocket.gateway';
 import { WEBSOCKET_EVENTS_QUEUE } from './constants/websocket.constant';
+import { EventRequest } from '../generated/src/proto/events';
 
 @Processor(WEBSOCKET_EVENTS_QUEUE)
 export class WebSocketEventProcessor extends WorkerHost {
-  constructor(private readonly webSocketGatewat: EventWebSocketGateway) {
+  private eventCount: Record<string, number> = {};
+  constructor(private readonly webSocketGateway: EventWebSocketGateway) {
     super();
   }
 
   async process(job: Job<{ ownerId: string; events: any[] }>, token?: string): Promise<any> {
     const { ownerId, events } = job.data;
     try {
-      const parsedEvents = events.map((event) => JSON.parse(event.payload));
-      this.webSocketGatewat.broadcastToUser(ownerId, parsedEvents);
+      events.forEach((event) => (event.payload = JSON.parse(event.payload)));
+      // const aggregatedEvents = this.aggregateEvents(events);
+
+      this.webSocketGateway.broadcastToUser(ownerId, events);
     } catch (error) {
       console.error(`Failed to broadcast events to user ${ownerId}:`, error);
       throw error;
     }
+  }
+
+  aggregateEvents(events: EventRequest[]) {
+    events.forEach((event) => {
+      this.eventCount[event.eventName] = (this.eventCount[event.eventName] || 0) + 1;
+    });
+    return this.eventCount;
   }
 }

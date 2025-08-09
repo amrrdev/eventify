@@ -9,6 +9,7 @@ import { ApiUsageTrackerProcessor } from './api-usage-tracker.processor';
 import { EventsHttpModule } from '../events-http/events-http.module';
 import { StreamEventBatcher } from './stream-event-batcher.service';
 import { EventWebSocketModule } from '../websocket/events-websocket.module';
+import { MetricsAggregationModule } from '../metrics/metrics-aggregation.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { EventWebSocketModule } from '../websocket/events-websocket.module';
     BullModule.registerQueue({
       name: API_USAGE_TRACKER_QUEUE,
     }),
+    MetricsAggregationModule,
   ],
   controllers: [EventsController],
   providers: [EventsService, EventInterceptor, ApiUsageTrackerProcessor, StreamEventBatcher],

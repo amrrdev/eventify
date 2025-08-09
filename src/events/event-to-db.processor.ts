@@ -2,6 +2,7 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { EVENT_PROCESS_QUEUE } from '../events-http/events-http.constants';
 import { EventsHttpService } from '../events-http/events-http.service';
+import { EventRequest } from '../generated/src/proto/events';
 
 @Processor(EVENT_PROCESS_QUEUE, { concurrency: 10 })
 export class EventHttpProcessor extends WorkerHost {
@@ -15,10 +16,17 @@ export class EventHttpProcessor extends WorkerHost {
       ...event,
       payload: JSON.parse(event.payload),
     }));
+
     try {
       await this.eventsHttpService.insertBatch(parsedEvents);
     } catch (error) {
       throw new Error(error.message);
     }
   }
+
+  /**
+   * {
+   *  payment_failed: "120"
+   * }
+   */
 }

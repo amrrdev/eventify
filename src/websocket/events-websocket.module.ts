@@ -17,6 +17,6 @@ import { WebSocketEventProcessor } from './events-websocket.processor';
     }),
   ],
   providers: [EventWebSocketGateway, StreamWebSocketBatcher, WebSocketEventProcessor],
-  exports: [StreamWebSocketBatcher],
+  exports: [StreamWebSocketBatcher, EventWebSocketGateway],
 })
 export class EventWebSocketModule {}

@@ -12,6 +12,8 @@ import bullmqConfig from './config/bullmq.config';
           connection: {
             host: bullmqConfigrations.host,
             port: bullmqConfigrations.port,
+            family: 6, // Use IPv6 to match Redis client
+            maxRetriesPerRequest: null,
           },
         };
       },

@@ -2,11 +2,19 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ApiKeyRepository } from './repository/api-key.repository';
 import * as crypto from 'node:crypto';
 import { ValidateApiKeyDto } from './dtos/validate-api-key.dto';
-import { ApiKeyStatus } from './types/api-key.types';
+import { UpdateApiKeyActivationDto } from './dtos/update-api-key-activation.interface';
 
 @Injectable()
 export class ApiKeyService {
   constructor(private readonly apiKeyRepository: ApiKeyRepository) {}
+
+  async deleteApiKey(ownerId: string, key: string) {
+    return await this.apiKeyRepository.deleteApiKey(ownerId, key);
+  }
+
+  async updateApiKeyActivation(ownerId: string, key: string, updateApiKeyActivation: UpdateApiKeyActivationDto) {
+    return await this.apiKeyRepository.updateApiKeyActivation(ownerId, key, updateApiKeyActivation.isActive);
+  }
 
   async findUserApiKeys(ownerId: string) {
     return await this.apiKeyRepository.findUserApiKeys({ ownerId });
@@ -35,9 +43,9 @@ export class ApiKeyService {
     return apiKey;
   }
 
-  async createApiKey(ownerId: string) {
+  async createApiKey(ownerId: string, name: string) {
     const apiKey = this.generateApiKey(ownerId);
-    await this.apiKeyRepository.createApiKey({ key: apiKey, ownerId });
+    await this.apiKeyRepository.createApiKey({ key: apiKey, ownerId, name });
     return { apiKey };
   }
 
