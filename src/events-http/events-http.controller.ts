@@ -9,7 +9,7 @@ export class EventsHttpController {
   constructor(private readonly eventHttpService: EventsHttpService) {}
 
   @Get()
-  async getEvents(@ActiveUser('sub') sub: string, @Query() getEventsDto?: GetEventsDto) {
+  async getEvents(@ActiveUser('sub') sub: string, @Query() getEventsDto: GetEventsDto) {
     return this.eventHttpService.getEvents(sub, getEventsDto);
   }
 

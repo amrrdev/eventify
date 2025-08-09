@@ -71,4 +71,22 @@ export class EventHttpRepository {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async getEventsWithFilter(params: {
+    filter: Record<string, any>;
+    limit: number;
+    skip: number;
+    sort: Record<string, 1 | -1>;
+  }): Promise<{ items: any[]; total: number }> {
+    const { filter, limit, skip, sort } = params;
+    try {
+      const [items, total] = await Promise.all([
+        this.EventRepository.find(filter).sort(sort).skip(skip).limit(limit).lean().exec(),
+        this.EventRepository.countDocuments(filter).exec(),
+      ]);
+      return { items, total };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }
