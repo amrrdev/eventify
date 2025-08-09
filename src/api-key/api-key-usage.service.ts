@@ -73,7 +73,7 @@ export class ApiKeyUsageService implements OnModuleInit {
 
     // const currentUsage = getResult[1] as Record<string, string>;
     const usageCount = parseInt(usageCountStr, 10);
-    const usageLimit = parseInt(usageCountStr, 10);
+    const usageLimit = parseInt(usageLimitStr, 10);
 
     return {
       key: apiKey,

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventRequest, EventResponse } from '../generated/src/proto/events';
-import { finalize, Observable, Subject } from 'rxjs';
+import { finalize, Observable, Subject, Subscription } from 'rxjs';
 import { RpcException } from '@nestjs/microservices';
 import { Metadata } from '@grpc/grpc-js';
 import { ApiKeyUsageService } from '../api-key/api-key-usage.service';
@@ -64,13 +64,16 @@ export class EventsService {
         this.streamEventBatcher.addStreamEvent({ ownerId, ...event });
         this.streamWebSocketBatcher.addEvent(ownerId, event);
 
-        console.log(`📤 Adding metrics aggregation job for owner ${ownerId}, event: ${event.eventName}`);
+        this.apiKeyUsageQueue.add('save-usage', {
+          key: this.latestUsageResult.key,
+          usageCount: usageResult.usageCount,
+          usageLimit: usageResult.usageLimit,
+        });
+
         await this.metricsAggregationQueue.add('process-aggregation', {
           ownerId,
           event,
         });
-        console.log(`✅ Metrics aggregation job added successfully`);
-        // await this.metricsAggregationService.processEvent(event);
         responseSubject.next({
           status: 'received',
           message: 'ok',
