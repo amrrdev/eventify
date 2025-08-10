@@ -41,43 +41,32 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
 
   async handleConnection(client: Socket, ...args: any[]) {
     try {
-      console.log('New WebSocket connection attempt:', client.id);
-      
       const token = this.extractTokenFromHeader(client);
-      console.log('Extracted token:', token ? 'Token present' : 'No token');
-      
+
       if (!token) {
-        console.log('No token provided, disconnecting client:', client.id);
         client.emit('error', { message: 'Authentication token required' });
         client.disconnect(true);
         return;
       }
 
-      console.log('Attempting to verify JWT token...');
       const payload = await this.jwtService.verifyAsync(token as string, {
         secret: this.jwtConfigrations.secret,
         issuer: this.jwtConfigrations.issuer,
         audience: this.jwtConfigrations.audience,
       });
 
-      console.log('JWT verified successfully for user:', payload.sub);
-      
       // Store user data first
       client.data[REQUEST_USER_KEY] = payload;
-      
+
       // Add to connected clients
       this.connectedClients.add(client);
-      
+
       // Join user-specific room
       await client.join(`user_${payload.sub}`);
-      
+
       // Send initial data after everything is set up
       await this.sendInitialData(client, payload);
-      
-      console.log(`User ${payload.sub} successfully connected to WebSocket`);
-      
     } catch (error) {
-      console.error('WebSocket authentication failed for client:', client.id, error.message);
       client.emit('error', { message: 'Authentication failed', error: error.message });
       client.disconnect(true);
     }
@@ -85,18 +74,14 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
 
   handleDisconnect(client: Socket, ...args: any[]) {
     try {
-      console.log('Client disconnecting:', client.id);
-      
       // Remove from connected clients
       this.connectedClients.delete(client);
-      
+
       const payload: ActiveUserDate = client.data[REQUEST_USER_KEY];
       if (payload) {
-        console.log(`User ${payload.sub} disconnected from WebSocket (Client: ${client.id})`);
         // Leave the user room
         client.leave(`user_${payload.sub}`);
       } else {
-        console.log(`Anonymous client ${client.id} disconnected from WebSocket`);
       }
     } catch (error) {
       console.error('Error handling disconnect:', error);
@@ -113,7 +98,7 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
     if (queryToken && typeof queryToken === 'string') {
       return queryToken;
     }
-    
+
     // Fallback to authorization header
     const authHeader = client.handshake.headers.authorization;
     if (authHeader && typeof authHeader === 'string') {
@@ -122,7 +107,7 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
         return parts[1];
       }
     }
-    
+
     return undefined;
   }
 
@@ -135,8 +120,6 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
 
   private async sendInitialData(client: Socket, payload?: any) {
     try {
-      console.log('Sending initial data to client:', client.id);
-      
       // Send any cached/initial data when client first connects
       // You can call your existing metrics service here
       const initialData = {
@@ -151,10 +134,8 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
         userId: payload?.sub || null,
         connectedAt: new Date().toISOString(),
       };
-      
+
       client.emit('dashboard_data', initialData);
-      console.log('Initial data sent to client:', client.id);
-      
     } catch (error) {
       console.error('Error sending initial data:', error);
     }

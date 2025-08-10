@@ -19,6 +19,7 @@ import { EventsModule } from './events/events.module';
 import { EventsHttpModule } from './events-http/events-http.module';
 import { EventWebSocketModule } from './websocket/events-websocket.module';
 import { MetricsAggregationModule } from './metrics/metrics-aggregation.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { MetricsAggregationModule } from './metrics/metrics-aggregation.module';
     EventsHttpModule,
     EventWebSocketModule,
     MetricsAggregationModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

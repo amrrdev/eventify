@@ -55,7 +55,6 @@ export class EventHttpRepository {
     try {
       const result = this.EventRepository.insertMany(createEvents, { ordered: false });
     } catch (error) {
-      console.error(`❌ Batch failed:`, error);
       throw error; // Let BullMQ handle retries
     }
   }

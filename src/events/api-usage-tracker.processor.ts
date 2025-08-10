@@ -14,7 +14,6 @@ export class ApiUsageTrackerProcessor extends WorkerHost {
 
   async process(job: Job, token?: string): Promise<any> {
     const { key, usageCount, usageLimit } = job.data;
-    console.log(usageCount, usageLimit);
     if (usageCount >= usageLimit) {
       throw new RpcException('');
     } else {

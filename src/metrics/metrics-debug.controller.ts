@@ -11,14 +11,11 @@ export class MetricsDebugController {
 
   @Get('test/:userId')
   async testMetrics(@Param('userId') userId: string) {
-    console.log(`🧪 Testing metrics for user: ${userId}`);
     return await this.metricsAggregationService.testMetricsAggregation(userId);
   }
 
   @Post('simulate/:userId')
   async simulateEvent(@Param('userId') userId: string, @Body() eventData?: any) {
-    console.log(`🎭 Simulating event for user: ${userId}`);
-
     const mockEvent: EventRequest = {
       eventName: eventData?.eventName || 'test_event',
       payload: JSON.stringify({

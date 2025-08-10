@@ -80,9 +80,7 @@ export class EventsService {
         });
       },
 
-      complete: () => {
-        console.log('Client stream completed');
-      },
+      complete: () => {},
 
       error: (error) => {
         console.error('Stream error:', error);

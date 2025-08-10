@@ -39,7 +39,6 @@ export class MetricsAggregationService {
     const eventTime = new Date(event.timestamp);
 
     if (isNaN(eventTime.getTime())) {
-      console.error(`❌ Invalid event timestamp received: "${event.timestamp}"`);
       return; // or handle with default: const eventTime = now;
     } // Use current time for consistency
     const timeKey = this.getTimeKey(now);
@@ -50,9 +49,7 @@ export class MetricsAggregationService {
     let parsedPayload: any = {};
     try {
       parsedPayload = JSON.parse(event.payload);
-    } catch (e) {
-      console.warn('Failed to parse event payload:', e);
-    }
+    } catch (e) {}
 
     // Update activity timestamp in Redis
     await this.updateLastActivityTime(now);
@@ -68,9 +65,7 @@ export class MetricsAggregationService {
         this.updateReferrerMetrics(timeKey, event, parsedPayload),
         this.updatePerformanceMetrics(timeKey, event),
       ]);
-    } catch (error) {
-      console.error(`❌ Failed to update metrics:`, error);
-    }
+    } catch (error) {}
 
     // Add to live events buffer
     this.addToLiveEvents(event, parsedPayload);
@@ -214,9 +209,6 @@ export class MetricsAggregationService {
     const isActive = await this.isSystemActive();
 
     if (!isActive) {
-      console.log(
-        `⏸️ System inactive for more than ${this.INACTIVE_THRESHOLD_MINUTES} minutes, showing minimal metrics`,
-      );
       return this.generateInactiveMetrics();
     }
 

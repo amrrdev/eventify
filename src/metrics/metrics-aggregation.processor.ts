@@ -14,7 +14,6 @@ export class MetricsAggregationProcessor extends WorkerHost {
     try {
       await this.metricsAggregationService.processEvent(ownerId, event);
     } catch (error) {
-      console.error(`❌ MetricsAggregationProcessor: Failed to process event:`, error);
       throw error;
     }
   }
