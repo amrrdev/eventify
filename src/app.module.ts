@@ -7,10 +7,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import databaseConfig from './config/database.config';
 import { RedisModule } from './integrations/redis/redis.module';
-import { NotificationService } from './integrations/notification/notification.service';
 import { NotificationModule } from './integrations/notification/notification.module';
 import { BullmqModule } from './integrations/bullmq/bullmq.module';
-import { BullModule } from '@nestjs/bullmq';
 import notificationConfig from './integrations/notification/config/notification.config';
 import redisConfig from './integrations/redis/config/redis.config';
 import bullmqConfig from './integrations/bullmq/config/bullmq.config';
@@ -20,6 +18,7 @@ import { EventsHttpModule } from './events-http/events-http.module';
 import { EventWebSocketModule } from './websocket/events-websocket.module';
 import { MetricsAggregationModule } from './metrics/metrics-aggregation.module';
 import { CommonModule } from './common/common.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -60,6 +59,7 @@ import { CommonModule } from './common/common.module';
     EventWebSocketModule,
     MetricsAggregationModule,
     CommonModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
