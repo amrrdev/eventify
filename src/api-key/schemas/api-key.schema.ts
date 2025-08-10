@@ -23,7 +23,7 @@ export class ApiKey extends Document {
   @Prop({ default: 0 })
   usageCount: number;
 
-  @Prop({ default: 100 })
+  @Prop({ default: 5000 })
   usageLimit: number;
 }
 
