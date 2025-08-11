@@ -1,30 +1,35 @@
-# Build stage
-FROM node:18-alpine AS builder
+# -------- Build stage --------
+FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --ignore-scripts
-COPY . .
-RUN npm run build
+RUN npm ci --no-audit --no-fund
+COPY tsconfig*.json nest-cli.json ./
+COPY src ./src
+RUN npm run build && npm prune --omit=dev
 
-# Production stage
-FROM node:18-alpine AS production
+# -------- Railway production with Nginx --------
+FROM nginx:alpine AS railway
 WORKDIR /app
 
-# Install Redis
-RUN apk add --no-cache redis
+# Install Node.js and Redis
+RUN apk add --no-cache nodejs npm redis curl
 
-# Copy dependencies
-COPY package*.json ./
-RUN npm ci --ignore-scripts --only=production
+# Copy Nginx config for Railway
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy build files
-COPY --from=builder /app/dist ./dist
+# Copy production node_modules and built app
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
 
-# Copy Redis configuration
-COPY redis.conf /etc/redis.conf
+# Copy startup script for Railway (starts redis + node + nginx)
+COPY start-railway.sh ./start-railway.sh
+RUN chmod +x start-railway.sh
 
-# Expose ports
-EXPOSE 3000 50051 6379
+# Railway exposes only port 80
+EXPOSE 80
 
-# Start Redis and application
-CMD ["sh", "-c", "redis-server /etc/redis.conf & node dist/main.js"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD redis-cli ping && curl -f http://localhost/health || exit 1
+
+CMD ["./start-railway.sh"]

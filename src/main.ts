@@ -25,7 +25,11 @@ async function bootstrap() {
     options: {
       package: 'events',
       protoPath: join(process.cwd(), 'src/proto/events.proto'),
-      url: '0.0.0.0:50051',
+      url: '0.0.0.0:4000',
+      channelOptions: {
+        'grpc.max_send_message_length': 2 * 1024 * 1024 * 1024, // 2GB
+        'grpc.max_receive_message_length': 2 * 1024 * 1024 * 1024, // 2GB
+      },
       loader: {
         keepCase: true,
         longs: String,
