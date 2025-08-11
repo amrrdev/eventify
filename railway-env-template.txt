@@ -1,0 +1,29 @@
+# Railway Environment Variables
+# Copy these to your Railway project's environment variables
+
+NODE_ENV=production
+PORT=3000
+
+# Database - REQUIRED
+# Get this from Railway's MongoDB addon or external MongoDB service
+DATABASE_URL=mongodb://user:password@host:port/database
+
+# JWT Configuration - REQUIRED
+JWT_SECRET=your_super_secure_jwt_secret_for_production_at_least_32_characters_long
+JWT_TOKEN_AUDIENCE=your-railway-domain.railway.app
+JWT_TOKEN_ISSUER=your-railway-domain.railway.app
+ACCESS_TOKEN_TTL=3600
+REFRESH_TOKEN_TTL=86400
+
+# Redis (internal - no need to set these, handled by container)
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+
+# Notification Services (optional)
+GMAIL_EMAIL=your_email@gmail.com
+GMAIL_PASSWORD=your_app_password
+SLACK_WEBHOOK_URL=your_slack_webhook_url
+
+# Application Ports (internal - Railway handles external routing)
+GRPC_PORT=4000
+WEBSOCKET_PORT=3000

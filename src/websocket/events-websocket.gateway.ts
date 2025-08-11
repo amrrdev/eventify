@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
   WebSocketGateway,
   WebSocketServer,
   WsException,
@@ -28,8 +29,9 @@ import { ConfigType } from '@nestjs/config';
   pingInterval: 25000,
 })
 @Injectable()
-export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
   private connectedClients = new Set<Socket>();
+  private isInitialized = false;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -38,6 +40,11 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
 
   @WebSocketServer()
   server: Server;
+
+  afterInit(server: Server) {
+    this.isInitialized = true;
+    console.log('✅ WebSocket server initialized');
+  }
 
   async handleConnection(client: Socket, ...args: any[]) {
     try {
@@ -112,8 +119,8 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
   }
 
   broadcastMetrics(userId: string, metrics: any): void {
-    if (!this.server) {
-      console.warn('WebSocket server not initialized yet, skipping metrics broadcast');
+    if (!this.isInitialized || !this.server) {
+      console.warn('WebSocket server not ready, skipping metrics broadcast');
       return;
     }
     this.server.to(`user_${userId}`).emit('dashboard_data', metrics);

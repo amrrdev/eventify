@@ -12,4 +12,15 @@ export class HealthController {
   async checkHealth() {
     return await this.healthService.checkHealth();
   }
+
+  @Get('simple')
+  simpleHealth() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      service: 'eventify',
+      version: '1.0.0'
+    };
+  }
 }
