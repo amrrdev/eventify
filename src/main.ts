@@ -7,6 +7,8 @@ import * as cookieParser from 'cookie-parser';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { ErrorLoggingInterceptor } from './common/interceptors/error-logging.interceptor';
 import { UnhandledExceptionService } from './common/services/unhandled-exception.service';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { writeFileSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -57,6 +59,23 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('api/v1');
+
+  // Swagger Configuration
+  const config = new DocumentBuilder()
+    .setTitle('Eventify API')
+    .setDescription('Event management platform API')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  // Write swagger.json file
+  writeFileSync('./swagger.json', JSON.stringify(document, null, 2));
+  console.log('Swagger JSON file generated at ./swagger.json');
+
+  // Setup Swagger UI at /docs
+  SwaggerModule.setup('/api/v1/docs', app, document);
 
   try {
     await app.startAllMicroservices();

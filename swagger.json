@@ -1,86 +1,24 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "Eventify API",
-    "description": "Real-time event tracking and analytics platform with WebSocket support, gRPC streaming, and comprehensive dashboard metrics.",
-    "version": "1.0.0",
-    "contact": {
-      "name": "Eventify Team",
-      "email": "support@eventify.com"
-    },
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
-    }
-  },
-  "servers": [
-    {
-      "url": "http://localhost:3000",
-      "description": "Development server"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Health",
-      "description": "Application health check"
-    },
-    {
-      "name": "Authentication",
-      "description": "User authentication and authorization"
-    },
-    {
-      "name": "Users",
-      "description": "User management operations"
-    },
-    {
-      "name": "API Keys",
-      "description": "API key management for event tracking"
-    },
-    {
-      "name": "Events (HTTP)",
-      "description": "HTTP-based event management"
-    },
-    {
-      "name": "Events (gRPC)",
-      "description": "gRPC streaming event ingestion"
-    },
-    {
-      "name": "Metrics",
-      "description": "Debugging and testing metrics endpoints"
-    },
-    {
-      "name": "WebSocket",
-      "description": "Real-time WebSocket connections"
-    }
-  ],
+  "openapi": "3.0.0",
   "paths": {
-    "/": {
+    "/api/v1": {
       "get": {
-        "tags": ["Health"],
-        "summary": "Health check",
-        "description": "Basic health check endpoint to verify the service is running",
-        "operationId": "getHealth",
+        "operationId": "AppController_getHello",
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "Service is healthy",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "example": "Hello World!"
-                }
-              }
-            }
+            "description": ""
           }
-        }
+        },
+        "tags": [
+          "App"
+        ]
       }
     },
-    "/auth/sign-up": {
+    "/api/v1/auth/sign-up": {
       "post": {
-        "tags": ["Authentication"],
-        "summary": "User registration",
-        "description": "Register a new user account",
-        "operationId": "signUp",
+        "operationId": "AuthenticationController_signUp",
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -93,44 +31,18 @@
         },
         "responses": {
           "201": {
-            "description": "User registered successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "User already exists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": ""
           }
-        }
+        },
+        "tags": [
+          "Authentication"
+        ]
       }
     },
-    "/auth/sign-in": {
+    "/api/v1/auth/sign-in": {
       "post": {
-        "tags": ["Authentication"],
-        "summary": "User login",
-        "description": "Authenticate user and get access token",
-        "operationId": "signIn",
+        "operationId": "AuthenticationController_signIn",
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -143,74 +55,32 @@
         },
         "responses": {
           "200": {
-            "description": "Login successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/refresh-token": {
-      "post": {
-        "tags": ["Authentication"],
-        "summary": "Refresh access token",
-        "description": "Get new access token using refresh token",
-        "operationId": "refreshToken",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefreshTokenDto"
-              }
-            }
+            "description": ""
           }
         },
-        "responses": {
-          "200": {
-            "description": "Token refreshed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid refresh token",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
+        "tags": [
+          "Authentication"
+        ]
       }
     },
-    "/auth/verify-email": {
+    "/api/v1/auth/refresh-token": {
       "post": {
-        "tags": ["Authentication"],
-        "summary": "Verify email address",
-        "description": "Verify user email with OTP code",
-        "operationId": "verifyEmail",
+        "operationId": "AuthenticationController_refreshToken",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/verify-email": {
+      "post": {
+        "operationId": "AuthenticationController_verifyEmail",
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -223,34 +93,18 @@
         },
         "responses": {
           "200": {
-            "description": "Email verified successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid verification code",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": ""
           }
-        }
+        },
+        "tags": [
+          "Authentication"
+        ]
       }
     },
-    "/auth/otp/resend": {
+    "/api/v1/auth/otp/resend": {
       "post": {
-        "tags": ["Authentication"],
-        "summary": "Resend OTP",
-        "description": "Resend email verification OTP",
-        "operationId": "resendOtp",
+        "operationId": "AuthenticationController_resendOtp",
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -263,138 +117,58 @@
         },
         "responses": {
           "200": {
-            "description": "OTP sent successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too many requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "get": {
-        "tags": ["Users"],
-        "summary": "Get all users",
-        "description": "Retrieve all users (test endpoint)",
-        "operationId": "getAllUsers",
-        "responses": {
-          "200": {
-            "description": "Users retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api-key": {
-      "get": {
-        "tags": ["API Keys"],
-        "summary": "Get user API keys",
-        "description": "Retrieve all API keys for the authenticated user",
-        "operationId": "getUserApiKeys",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "API keys retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApiKey"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["API Keys"],
-        "summary": "Create API key",
-        "description": "Create a new API key for the authenticated user",
-        "operationId": "createApiKey",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateApiKeyDto"
-              }
-            }
+            "description": ""
           }
         },
-        "responses": {
-          "201": {
-            "description": "API key created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiKey"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
+        "tags": [
+          "Authentication"
+        ]
       }
     },
-    "/api-key/validate": {
+    "/api/v1/users": {
       "get": {
-        "tags": ["API Keys"],
-        "summary": "Validate API key",
-        "description": "Validate an API key",
-        "operationId": "validateApiKey",
+        "operationId": "UsersController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/v1/api-key": {
+      "get": {
+        "operationId": "ApiKeyConttroller_findUserApiKeys",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ApiKeyConttroller"
+        ]
+      },
+      "post": {
+        "operationId": "ApiKeyConttroller_createApiKey",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "ApiKeyConttroller"
+        ]
+      }
+    },
+    "/api/v1/api-key/validate": {
+      "get": {
+        "operationId": "ApiKeyConttroller_validateApiKey",
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -407,45 +181,22 @@
         },
         "responses": {
           "200": {
-            "description": "API key validation result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiKeyValidationResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "API key not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": ""
           }
-        }
+        },
+        "tags": [
+          "ApiKeyConttroller"
+        ]
       }
     },
-    "/api-key/{key}": {
+    "/api/v1/api-key/{key}": {
       "delete": {
-        "tags": ["API Keys"],
-        "summary": "Delete API key",
-        "description": "Delete an API key",
-        "operationId": "deleteApiKey",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "operationId": "ApiKeyConttroller_deleteApiKey",
         "parameters": [
           {
             "name": "key",
-            "in": "path",
             "required": true,
-            "description": "API key to delete",
+            "in": "path",
             "schema": {
               "type": "string"
             }
@@ -453,53 +204,20 @@
         ],
         "responses": {
           "200": {
-            "description": "API key deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "API key not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": ""
           }
-        }
+        },
+        "tags": [
+          "ApiKeyConttroller"
+        ]
       },
       "patch": {
-        "tags": ["API Keys"],
-        "summary": "Update API key",
-        "description": "Update API key activation status",
-        "operationId": "updateApiKey",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "operationId": "ApiKeyConttroller_updateApiKeyActivation",
         "parameters": [
           {
             "name": "key",
-            "in": "path",
             "required": true,
-            "description": "API key to update",
+            "in": "path",
             "schema": {
               "type": "string"
             }
@@ -510,112 +228,37 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateApiKeyDto"
+                "$ref": "#/components/schemas/UpdateApiKeyActivationDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "API key updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiKey"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "API key not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": ""
           }
-        }
+        },
+        "tags": [
+          "ApiKeyConttroller"
+        ]
       }
     },
-    "/events": {
+    "/api/v1/events": {
       "get": {
-        "tags": ["Events (HTTP)"],
-        "summary": "Get events",
-        "description": "Retrieve events for the authenticated user with optional pagination",
-        "operationId": "getEvents",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Number of events to return (max 1000)",
-            "schema": {
-              "type": "integer",
-              "default": 100,
-              "minimum": 1,
-              "maximum": 1000
-            }
-          },
-          {
-            "name": "skip",
-            "in": "query",
-            "description": "Number of events to skip",
-            "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
-          }
-        ],
+        "operationId": "EventsHttpController_getEvents",
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "Events retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EventsResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": ""
           }
-        }
+        },
+        "tags": [
+          "EventsHttp"
+        ]
       },
       "delete": {
-        "tags": ["Events (HTTP)"],
-        "summary": "Delete multiple events",
-        "description": "Delete multiple events by IDs",
-        "operationId": "deleteBatchEvents",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "operationId": "EventsHttpController_deletePatchEvents",
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -628,45 +271,22 @@
         },
         "responses": {
           "200": {
-            "description": "Events deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BatchDeleteResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": ""
           }
-        }
+        },
+        "tags": [
+          "EventsHttp"
+        ]
       }
     },
-    "/events/{id}": {
+    "/api/v1/events/{id}": {
       "delete": {
-        "tags": ["Events (HTTP)"],
-        "summary": "Delete event",
-        "description": "Delete a single event by ID",
-        "operationId": "deleteEvent",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "operationId": "EventsHttpController_deleteEvent",
         "parameters": [
           {
             "name": "id",
-            "in": "path",
             "required": true,
-            "description": "Event ID to delete",
+            "in": "path",
             "schema": {
               "type": "string"
             }
@@ -674,782 +294,134 @@
         ],
         "responses": {
           "200": {
-            "description": "Event deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Event not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/debug/metrics/test/{userId}": {
-      "get": {
-        "tags": ["Metrics"],
-        "summary": "Test metrics aggregation",
-        "description": "Test endpoint to retrieve aggregated metrics for a specific user",
-        "operationId": "testMetrics",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "description": "User ID to test metrics for",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metrics retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MetricsDashboard"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/debug/metrics/simulate/{userId}": {
-      "post": {
-        "tags": ["Metrics"],
-        "summary": "Simulate event",
-        "description": "Simulate an event for testing metrics aggregation",
-        "operationId": "simulateEvent",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "description": "User ID to simulate event for",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SimulateEventDto"
-              }
-            }
+            "description": ""
           }
         },
-        "responses": {
-          "200": {
-            "description": "Event simulated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SimulateEventResponse"
-                }
-              }
+        "tags": [
+          "EventsHttp"
+        ]
+      }
+    },
+    "/api/v1/debug/metrics/test/{userId}": {
+      "get": {
+        "operationId": "MetricsDebugController_testMetrics",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
             }
           }
-        }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "MetricsDebug"
+        ]
+      }
+    },
+    "/api/v1/debug/metrics/simulate/{userId}": {
+      "post": {
+        "operationId": "MetricsDebugController_simulateEvent",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "MetricsDebug"
+        ]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_checkHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/health/simple": {
+      "get": {
+        "operationId": "HealthController_simpleHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
       }
     }
   },
+  "info": {
+    "title": "Eventify API",
+    "description": "Event management platform API",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
+      "bearer": {
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "JWT token for authentication. Format: Bearer <token>"
-      },
-      "apiKeyAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "X-API-Key",
-        "description": "API key for event ingestion"
+        "type": "http"
       }
     },
     "schemas": {
       "SignUpDto": {
         "type": "object",
-        "required": ["name", "email", "password"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 3,
-            "description": "User's full name",
-            "example": "John Doe"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email address",
-            "example": "john.doe@example.com"
-          },
-          "password": {
-            "type": "string",
-            "minLength": 6,
-            "description": "User's password",
-            "example": "securePassword123"
-          }
-        }
+        "properties": {}
       },
       "SignInDto": {
         "type": "object",
-        "required": ["email", "password"],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email address",
-            "example": "john.doe@example.com"
-          },
-          "password": {
-            "type": "string",
-            "description": "User's password",
-            "example": "securePassword123"
-          }
-        }
-      },
-      "RefreshTokenDto": {
-        "type": "object",
-        "required": ["refreshToken"],
-        "properties": {
-          "refreshToken": {
-            "type": "string",
-            "description": "JWT refresh token",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          }
-        }
+        "properties": {}
       },
       "EmailVerificationDto": {
         "type": "object",
-        "required": ["email", "otp"],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email address",
-            "example": "john.doe@example.com"
-          },
-          "otp": {
-            "type": "string",
-            "description": "6-digit OTP code",
-            "example": "123456"
-          }
-        }
+        "properties": {}
       },
       "ResendOtpDto": {
         "type": "object",
-        "required": ["email"],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email address",
-            "example": "john.doe@example.com"
-          }
-        }
-      },
-      "CreateApiKeyDto": {
-        "type": "object",
-        "required": ["name"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Name for the API key",
-            "example": "Production API Key"
-          }
-        }
+        "properties": {}
       },
       "ValidateApiKeyDto": {
         "type": "object",
-        "required": ["apiKey"],
-        "properties": {
-          "apiKey": {
-            "type": "string",
-            "description": "API key to validate",
-            "example": "ak_1234567890abcdef"
-          }
-        }
+        "properties": {}
       },
-      "UpdateApiKeyDto": {
+      "UpdateApiKeyActivationDto": {
         "type": "object",
-        "required": ["isActive"],
-        "properties": {
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether the API key should be active",
-            "example": true
-          }
-        }
+        "properties": {}
       },
       "DeleteBatchEventsDto": {
         "type": "object",
-        "required": ["eventIds"],
-        "properties": {
-          "eventIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of event IDs to delete",
-            "example": ["64a1b2c3d4e5f6789012", "64a1b2c3d4e5f6789013"]
-          }
-        }
-      },
-      "SimulateEventDto": {
-        "type": "object",
-        "properties": {
-          "eventName": {
-            "type": "string",
-            "description": "Name of the event to simulate",
-            "example": "button_click"
-          },
-          "payload": {
-            "type": "object",
-            "additionalProperties": true,
-            "description": "Event payload data",
-            "example": {
-              "buttonId": "submit-btn",
-              "page": "/checkout",
-              "sessionId": "sess_123456"
-            }
-          }
-        }
-      },
-      "EventRequest": {
-        "type": "object",
-        "required": ["eventName", "payload", "timestamp"],
-        "properties": {
-          "eventName": {
-            "type": "string",
-            "description": "Name of the event",
-            "example": "page_view"
-          },
-          "payload": {
-            "type": "string",
-            "description": "JSON string containing event data",
-            "example": "{\"userId\":\"user123\",\"page\":\"/home\"}"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Event timestamp in ISO format",
-            "example": "2024-08-08T10:30:00Z"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Event tags for categorization",
-            "example": ["frontend", "user-action"]
-          },
-          "category": {
-            "type": "string",
-            "description": "Event category",
-            "example": "user-interaction"
-          },
-          "severity": {
-            "type": "integer",
-            "enum": [0, 1, 2, 3],
-            "description": "Event severity (0: UNSPECIFIED, 1: INFO, 2: WARN, 3: ERROR)",
-            "example": 1
-          }
-        }
-      },
-      "AuthResponse": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "JWT access token",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          },
-          "refreshToken": {
-            "type": "string",
-            "description": "JWT refresh token",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          }
-        }
-      },
-      "TokenResponse": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "description": "JWT access token",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          }
-        }
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "User ID",
-            "example": "64a1b2c3d4e5f6789012"
-          },
-          "name": {
-            "type": "string",
-            "description": "User's full name",
-            "example": "John Doe"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email address",
-            "example": "john.doe@example.com"
-          },
-          "isEmailVerified": {
-            "type": "boolean",
-            "description": "Whether email is verified",
-            "example": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "User creation timestamp",
-            "example": "2024-08-08T10:30:00Z"
-          }
-        }
-      },
-      "ApiKey": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "API key ID",
-            "example": "64a1b2c3d4e5f6789012"
-          },
-          "name": {
-            "type": "string",
-            "description": "API key name",
-            "example": "Production API Key"
-          },
-          "key": {
-            "type": "string",
-            "description": "API key value",
-            "example": "ak_1234567890abcdef"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether the API key is active",
-            "example": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "API key creation timestamp",
-            "example": "2024-08-08T10:30:00Z"
-          },
-          "lastUsedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last usage timestamp",
-            "example": "2024-08-08T12:30:00Z"
-          }
-        }
-      },
-      "ApiKeyValidationResponse": {
-        "type": "object",
-        "properties": {
-          "valid": {
-            "type": "boolean",
-            "description": "Whether the API key is valid",
-            "example": true
-          },
-          "ownerId": {
-            "type": "string",
-            "description": "Owner user ID",
-            "example": "64a1b2c3d4e5f6789012"
-          },
-          "keyName": {
-            "type": "string",
-            "description": "API key name",
-            "example": "Production API Key"
-          }
-        }
-      },
-      "Event": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Event ID",
-            "example": "64a1b2c3d4e5f6789012"
-          },
-          "eventName": {
-            "type": "string",
-            "description": "Name of the event",
-            "example": "page_view"
-          },
-          "payload": {
-            "type": "object",
-            "additionalProperties": true,
-            "description": "Event payload data"
-          },
-          "userId": {
-            "type": "string",
-            "description": "User ID who owns the event",
-            "example": "64a1b2c3d4e5f6789012"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Event timestamp",
-            "example": "2024-08-08T10:30:00Z"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Event tags",
-            "example": ["frontend", "user-action"]
-          },
-          "category": {
-            "type": "string",
-            "description": "Event category",
-            "example": "user-interaction"
-          },
-          "severity": {
-            "type": "integer",
-            "description": "Event severity level",
-            "example": 1
-          }
-        }
-      },
-      "EventsResponse": {
-        "type": "object",
-        "properties": {
-          "events": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Event"
-            }
-          },
-          "total": {
-            "type": "integer",
-            "description": "Total number of events",
-            "example": 1250
-          },
-          "limit": {
-            "type": "integer",
-            "description": "Limit used in query",
-            "example": 100
-          },
-          "skip": {
-            "type": "integer",
-            "description": "Skip used in query",
-            "example": 0
-          }
-        }
-      },
-      "MetricsDashboard": {
-        "type": "object",
-        "properties": {
-          "totalEvents": {
-            "type": "integer",
-            "description": "Total number of events",
-            "example": 15423
-          },
-          "totalEventsChange": {
-            "type": "number",
-            "description": "Percentage change in total events",
-            "example": 12.5
-          },
-          "activeUsers": {
-            "type": "integer",
-            "description": "Number of active users",
-            "example": 342
-          },
-          "activeUsersChange": {
-            "type": "number",
-            "description": "Percentage change in active users",
-            "example": 8.3
-          },
-          "eventsPerHour": {
-            "type": "integer",
-            "description": "Events per hour rate",
-            "example": 1250
-          },
-          "eventsPerHourChange": {
-            "type": "number",
-            "description": "Percentage change in events per hour",
-            "example": 5.7
-          },
-          "conversionRate": {
-            "type": "number",
-            "description": "Conversion rate percentage",
-            "example": 3.45
-          },
-          "conversionRateChange": {
-            "type": "number",
-            "description": "Change in conversion rate",
-            "example": 0.8
-          },
-          "eventVolumeData": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "time": {
-                  "type": "string",
-                  "example": "10:30 AM"
-                },
-                "events": {
-                  "type": "integer",
-                  "example": 125
-                }
-              }
-            }
-          },
-          "topEvents": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "example": "page_view"
-                },
-                "count": {
-                  "type": "integer",
-                  "example": 2451
-                }
-              }
-            }
-          },
-          "eventDistribution": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "example": "button_click"
-                },
-                "value": {
-                  "type": "integer",
-                  "example": 845
-                },
-                "percentage": {
-                  "type": "number",
-                  "example": 15.3
-                }
-              }
-            }
-          },
-          "geographicDistribution": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "country": {
-                  "type": "string",
-                  "example": "United States"
-                },
-                "count": {
-                  "type": "integer",
-                  "example": 1250
-                }
-              }
-            }
-          },
-          "deviceTypes": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "device": {
-                  "type": "string",
-                  "example": "desktop"
-                },
-                "count": {
-                  "type": "integer",
-                  "example": 2100
-                }
-              }
-            }
-          },
-          "topReferrers": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "referrer": {
-                  "type": "string",
-                  "example": "google.com"
-                },
-                "count": {
-                  "type": "integer",
-                  "example": 456
-                }
-              }
-            }
-          },
-          "performanceMetrics": {
-            "type": "object",
-            "properties": {
-              "avgResponseTime": {
-                "type": "number",
-                "description": "Average response time in milliseconds",
-                "example": 45.2
-              },
-              "processingRate": {
-                "type": "number",
-                "description": "Events processed per minute",
-                "example": 1250.5
-              },
-              "errorRate": {
-                "type": "number",
-                "description": "Error rate percentage",
-                "example": 0.02
-              },
-              "uptime": {
-                "type": "number",
-                "description": "System uptime percentage",
-                "example": 99.98
-              }
-            }
-          },
-          "liveEvents": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LiveEvent"
-            }
-          }
-        }
-      },
-      "LiveEvent": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "1691491800000_0.12345"
-          },
-          "eventName": {
-            "type": "string",
-            "example": "button_click"
-          },
-          "userId": {
-            "type": "string",
-            "example": "user123"
-          },
-          "country": {
-            "type": "string",
-            "example": "United States"
-          },
-          "device": {
-            "type": "string",
-            "example": "desktop"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2024-08-08T10:30:00Z"
-          },
-          "timeAgo": {
-            "type": "string",
-            "example": "2m ago"
-          }
-        }
-      },
-      "SimulateEventResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "example": "Event simulated successfully"
-          },
-          "event": {
-            "$ref": "#/components/schemas/EventRequest"
-          }
-        }
-      },
-      "BatchDeleteResponse": {
-        "type": "object",
-        "properties": {
-          "deletedCount": {
-            "type": "integer",
-            "description": "Number of events deleted",
-            "example": 5
-          },
-          "failedIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "IDs of events that failed to delete",
-            "example": []
-          }
-        }
-      },
-      "SuccessResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
-          "message": {
-            "type": "string",
-            "example": "Operation completed successfully"
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "example": "Bad Request"
-          },
-          "message": {
-            "type": "string",
-            "example": "Invalid input data"
-          },
-          "statusCode": {
-            "type": "integer",
-            "example": 400
-          }
-        }
+        "properties": {}
       }
     }
-  },
-  "externalDocs": {
-    "description": "Find more info about Eventify",
-    "url": "https://docs.eventify.com"
   }
 }

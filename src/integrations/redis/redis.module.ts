@@ -14,7 +14,6 @@ import { RedisService } from './redis.service';
         return new Redis({
           port: redisConfigrations.port,
           host: redisConfigrations.host,
-          password: redisConfigrations.password,
           maxRetriesPerRequest: null,
         });
       },

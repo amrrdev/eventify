@@ -20,7 +20,7 @@ export class HealthController {
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       service: 'eventify',
-      version: '1.0.0'
+      version: '1.0.0',
     };
   }
 }
