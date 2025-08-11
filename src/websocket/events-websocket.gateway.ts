@@ -112,6 +112,10 @@ export class EventWebSocketGateway implements OnGatewayConnection, OnGatewayDisc
   }
 
   broadcastMetrics(userId: string, metrics: any): void {
+    if (!this.server) {
+      console.warn('WebSocket server not initialized yet, skipping metrics broadcast');
+      return;
+    }
     this.server.to(`user_${userId}`).emit('dashboard_data', metrics);
     // this.connectedClients.forEach((client) => {
     //   client.emit('dashboard_data', metrics);

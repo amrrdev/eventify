@@ -11,7 +11,7 @@ redis-server --daemonize yes \
   --save "" \
   --appendonly no \
   --maxmemory 128mb \
-  --maxmemory-policy allkeys-lru
+  --maxmemory-policy noeviction
 
 # Wait for Redis
 echo "[railway] waiting for redis"
