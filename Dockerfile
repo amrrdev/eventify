@@ -21,6 +21,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 
+# Copy proto files explicitly (gRPC needs these at runtime)
+COPY --from=build /app/src/proto ./src/proto
+
 # Copy startup script for Railway (starts redis + node + nginx)
 COPY start-railway.sh ./start-railway.sh
 RUN chmod +x start-railway.sh
