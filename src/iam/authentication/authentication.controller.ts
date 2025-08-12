@@ -2,7 +2,6 @@ import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post,
 import { AuthenticationService } from './authentication.service';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { SignInDto } from './dtos/sign-in.dto';
-import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { EmailVerificationDto } from './dtos/email-verification.dto';
 import { ResendOtpDto } from './dtos/resend-otp.dto';
 import { Auth } from './decorators/auth.decorator';
@@ -41,10 +40,8 @@ export class AuthenticationController {
       throw new BadRequestException('Refresh token not found');
     }
 
-    // This returns { accessToken, refreshToken } with new tokens
     const result = await this.authenticationService.refreshToken({ refreshToken });
 
-    // CRITICAL: Update the HTTP-only cookie with the new refresh token
     response.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: false,
@@ -53,7 +50,6 @@ export class AuthenticationController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Only return the access token (refresh token is in HTTP-only cookie)
     return { accessToken: result.accessToken };
   }
 
