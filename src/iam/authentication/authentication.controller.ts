@@ -27,9 +27,6 @@ export class AuthenticationController {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
-      path: '/',
-      // Remove this line completely:
-      // domain: '.localhost',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

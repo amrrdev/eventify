@@ -23,6 +23,7 @@ export class GmailNotificationClient implements NotificationClient {
       secure: true,
     });
   }
+  // workflow@gmail.com
 
   async send(mailOptions: IMailOptions): Promise<void> {
     try {
