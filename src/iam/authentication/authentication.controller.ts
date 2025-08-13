@@ -24,8 +24,9 @@ export class AuthenticationController {
     const { accessToken, refreshToken } = await this.authenticationService.singIn(signInDto);
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: true, // ← Change this from false
+      sameSite: 'none', // ← Change this from 'lax'
+      domain: '.evntfy.tech', // ← Add this
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -44,9 +45,9 @@ export class AuthenticationController {
 
     response.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
+      secure: true, // ← Change this from false
+      sameSite: 'none', // ← Change this from 'lax'
+      domain: '.evntfy.tech', // ← Add this
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
