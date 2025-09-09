@@ -39,7 +39,7 @@ The system implements a sophisticated event processing pipeline optimized for bo
 Client → Nginx → gRPC Server (Port 4000) → Event Validation → Rate Limiting
 ```
 
-- **Throughput**: 100,000+ events/second via gRPC streaming
+- **Throughput**: 10,000+ events/second via gRPC streaming
 - **Validation**: Protocol buffer schema validation with custom business rules
 - **Rate Limiting**: Redis-based API key usage tracking with configurable quotas
 
