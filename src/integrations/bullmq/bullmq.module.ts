@@ -12,7 +12,6 @@ import bullmqConfig from './config/bullmq.config';
           connection: {
             host: bullmqConfigrations.host,
             port: bullmqConfigrations.port,
-            password: bullmqConfigrations.password,
             maxRetriesPerRequest: null,
           },
         };

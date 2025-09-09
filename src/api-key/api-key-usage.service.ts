@@ -3,11 +3,16 @@ import { REDIS_CLIENT } from '../integrations/redis/redis.constants';
 import * as Redis from 'ioredis';
 import { ApiKeyStatus } from './types/api-key.types';
 import { INCREMENT_USAGE_SCRIPT } from './constants/lua-scripts.constant';
+import { ApiKeyRepository } from './repository/api-key.repository';
 
 @Injectable()
 export class ApiKeyUsageService implements OnModuleInit {
   private scriptSha: string;
-  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis.Redis) {}
+  private syncCounter = new Map<string, number>();
+  constructor(
+    @Inject(REDIS_CLIENT) private readonly redis: Redis.Redis,
+    private readonly apiKeyRepository: ApiKeyRepository,
+  ) {}
 
   async onModuleInit() {
     this.scriptSha = (await this.redis.script('LOAD', INCREMENT_USAGE_SCRIPT)) as string;
@@ -48,32 +53,16 @@ export class ApiKeyUsageService implements OnModuleInit {
       key,
     )) as string[];
 
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // NOTE: This approach is **not atomic** and may lead to a **race condition**
-    // if multiple workers switch context between the `HINCRBY` and `HGETALL` operations.
-    // Since the pipeline does not guarantee atomicity across multiple commands,
-    // another worker mght modify the hash between these two operations,
-    // causing inaccurate or stale read    // const pipeline = this.redis.pipeline();
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    // // pipeline.hincrby(key, 'usageCount', 1);
-    // // pipeline.hgetall(key);
-
-    // const results = await pipeline.exec();
-
-    // if (!results || results.length < 2) {
-    //   throw new Error('Failed to increment usage');
-    // }
-
-    // const [incrResult, getResult] = results;
-
-    // if (incrResult[0] || getResult[0]) {
-    //   throw new Error('Redis operation failed');
-    // }
-
-    // const currentUsage = getResult[1] as Record<string, string>;
     const usageCount = parseInt(usageCountStr, 10);
     const usageLimit = parseInt(usageLimitStr, 10);
+
+    const currentCount = this.syncCounter.get(apiKeyId) || 0;
+    this.syncCounter.set(apiKeyId, currentCount + 1);
+
+    if ((currentCount + 1) % 1000 === 0) {
+      this.apiKeyRepository.updateApiKeyUsage(apiKey, usageCount);
+      this.syncCounter.set(apiKeyId, 0);
+    }
 
     return {
       key: apiKey,

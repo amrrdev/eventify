@@ -3,8 +3,7 @@ import { Observable } from 'rxjs';
 import { RpcException } from '@nestjs/microservices';
 import { Metadata } from '@grpc/grpc-js';
 import { ApiKeyService } from '../../api-key/api-key.service';
-import { randomUUID } from 'node:crypto';
-import { API_KEY_ID, CLIENT_ID, OWNER_ID } from '../events.constants';
+import { API_KEY_ID, OWNER_ID } from '../events.constants';
 import { ApiKeyUsageService } from '../../api-key/api-key-usage.service';
 
 @Injectable()
@@ -24,12 +23,12 @@ export class EventInterceptor implements NestInterceptor {
 
     try {
       const validApiKey = await this.apiKeyService.validateApiKey({ apiKey: apiKey.toString() });
-      const apiKeyId = randomUUID();
+      const apiKeyId = validApiKey.key;
 
       metadata.set(OWNER_ID, String(validApiKey.ownerId));
       metadata.set(API_KEY_ID, apiKeyId);
 
-      await this.apiKeyUsageService.initializeApiKeyUsage(apiKeyId, validApiKey);
+      this.apiKeyUsageService.initializeApiKeyUsage(apiKeyId, validApiKey);
 
       return next.handle();
     } catch (error) {
